@@ -14,6 +14,7 @@ class Forms(ft.Control):
                                   max_length=6,
                                   autofocus=True,
                                   )
+        
         self.resultado_text = ft.Text()
         
       
@@ -105,6 +106,8 @@ class Forms(ft.Control):
                     # Creamos una columna la cual es sus controlers contará
                     # con una fila responsi en la cual vamos a colocar nuestra tabla
                     ft.Column(
+                        expand=True,
+                        scroll='auto',
                         controls=[
                             ft.ResponsiveRow([
                                 self.data_table,
@@ -131,11 +134,16 @@ class Forms(ft.Control):
 # Comandos
 
     def on_registrar_llegada(self, e):
-        placa = self.placa.value
-        self.base.registrar_llegada(placa)
-        self.resultado_text.value = f"Vehículo {placa} registrado como llegado."
-        self.placa.value = ""
-        self.page.update()
+        if self.placa.value != '':
+            # self.placa.value=self.placa.value.upper()
+            placa = self.placa.value
+            self.base.registrar_llegada(placa)
+            self.resultado_text.value = f"Vehículo {placa} registrado como llegado."
+            self.placa.value = ""
+        else:
+            self.resultado_text.value = 'Debe ingresar un aplaca'
+        self.show_data()
+
         
     def on_registrar_salida(self, e):
         placa = self.placa.value
@@ -145,7 +153,8 @@ class Forms(ft.Control):
         else:
             self.resultado_text.value = f"No se encontró el vehículo {placa}."
         self.placa.value = ""
-        self.page.update()
+        self.show_data()
+
         
     def show_data(self):
         self.data_table.rows = [] # Se leccionamos las filas de la tabla
@@ -154,10 +163,12 @@ class Forms(ft.Control):
             # En cada iteraccion los asignamos a una DataRow
             self.data_table.rows.append(
                 ft.DataRow(
+                    
                     cells=[
                         ft.DataCell(ft.Text(x[1])),
                         ft.DataCell(ft.Text(x[2])),
                     ]
                 )
+                
             )
         self.page.update()
