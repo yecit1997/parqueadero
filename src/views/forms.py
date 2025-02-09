@@ -137,19 +137,26 @@ class Forms(ft.Control):
         if self.placa.value.strip() != '':
             placa = self.placa.value.strip().upper()
             data = self.base.get_data()
-            
+
             # Verificar si la placa ya está registrada sin hora de salida
             placa_existente_sin_salida = any(x[1] == placa and x[3] is None for x in data)
             if placa_existente_sin_salida:
-                self.resultado_text.value = f"""Vehículo {placa} ya se encuentra registrado.\nEsperando salida."""
+                self.resultado_text.value = f"Vehículo {placa} ya se encuentra registrado.\nEsperando salida."
             else:
-                # Verificar si la placa está registrada con hora de salida, si es así, registrarla de nuevo
-                self.base.registrar_llegada(placa)
-                self.resultado_text.value = f"Vehículo {placa} registrado como llegado."
+                # Verificar si la placa está registrada con hora de salida
+                placa_existente_con_salida = next((x for x in data if x[1] == placa and x[3] is not None), None)
+                if placa_existente_con_salida:
+                    # Actualizar el registro existente
+                    self.base.actualizar_registro(placa_existente_con_salida[0], placa)
+                    self.resultado_text.value = f"Vehículo {placa} reingreso."
+                else:
+                    # Registrar una nueva llegada
+                    self.base.registrar_llegada(placa)
+                    self.resultado_text.value = f"Vehículo {placa} registrado como llegado."
                 self.placa.value = ""
         else:
             self.resultado_text.value = 'Debe ingresar una placa'
-        
+
         self.show_data()
 
 

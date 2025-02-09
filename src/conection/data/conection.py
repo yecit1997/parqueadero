@@ -3,11 +3,11 @@ import os
 from datetime import datetime
 
 class Conection:
-    
+
     def __init__(self) -> None:
         self.db_path = os.path.join('storage/data', 'estacionamiento.db')
         self.init_db()
-        
+
     # Función para inicializar la base de datos
     def init_db(self):
         with sql.connect(self.db_path) as conn:
@@ -25,6 +25,7 @@ class Conection:
 
     # Función para registrar la llegada de un vehículo
     def registrar_llegada(self, placa):
+        placa = placa.upper()  # Convertir a mayúsculas antes de guardar
         with sql.connect(self.db_path) as conn:
             cursor = conn.cursor()
             hora_llegada = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -35,10 +36,11 @@ class Conection:
 
     # Función para registrar la salida de un vehículo y calcular el precio
     def registrar_salida(self, placa):
+        placa = placa.upper()  # Convertir a mayúsculas antes de buscar
         with sql.connect(self.db_path) as conn:
             cursor = conn.cursor()
             hora_salida = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            
+
             # Obtener la hora de llegada
             cursor.execute('''
                 SELECT hora_llegada FROM estacionamiento WHERE placa = ? AND hora_salida IS NULL
@@ -49,11 +51,11 @@ class Conection:
                 hora_llegada = datetime.strptime(resultado[0], '%Y-%m-%d %H:%M:%S')
                 # Calcular el tiempo de estacionamiento
                 tiempo_estacionado = (datetime.now() - hora_llegada).total_seconds() / 3600  # en horas
-                precio = tiempo_estacionado * VALOR_ESTACIONAMIENTO 
-                
+                precio = tiempo_estacionado * VALOR_ESTACIONAMIENTO
+
                 if precio < VALOR_ESTACIONAMIENTO:
                     precio = VALOR_ESTACIONAMIENTO
-                
+
                 # Actualizar la hora de salida y el precio
                 cursor.execute('''
                     UPDATE estacionamiento SET hora_salida = ?, precio = ? WHERE placa = ? AND hora_salida IS NULL
@@ -77,4 +79,12 @@ class Conection:
                 print(f"Error al obtener los datos: {e}")
                 return []
 
-
+    # Función para actualizar el registro de llegada
+    def actualizar_registro(self, id, placa):
+        with sql.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            hora_llegada = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            cursor.execute('''
+                UPDATE estacionamiento SET placa = ?, hora_llegada = ?, hora_salida = NULL, precio = NULL WHERE id = ?
+            ''', (placa, hora_llegada, id))
+            conn.commit()
