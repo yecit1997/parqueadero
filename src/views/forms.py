@@ -38,9 +38,8 @@ class Forms(ft.Control):
             
             columns=[
                 ft.DataColumn(ft.Text('Placa', color='blue', weight='bold')),
-                ft.DataColumn(ft.Text('Hora entrada', color='blue', weight='bold'), numeric=True),
-                # ft.DataColumn(ft.Text('Correo', color='blue', weight='bold')),
-                # ft.DataColumn(ft.Text('Teléfono', color='blue', weight='bold'), numeric=True)
+                ft.DataColumn(ft.Text('Hora entrada', color='blue', weight='bold'),),
+                ft.DataColumn(ft.Text('Hora salida', color='blue', weight='bold')),
             ]
         )
             
@@ -59,14 +58,14 @@ class Forms(ft.Control):
                             "Ingrese la placa del vehiculo",
                             text_align="center",
                             size=30,
-                            color=ft.Colors.BLUE_ACCENT,
+                            color=ft.Colors.WHITE,
                         ),
                         # padding=10,
                     ),
                     ft.Container(
                         content=ft.Column(
                             alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                            spacing=50,
+                            spacing=50,                            
                             controls=[
                                 self.placa,
                                 self.resultado_text,
@@ -90,7 +89,8 @@ class Forms(ft.Control):
         self.tabla = ft.Container(
             col=9, 
             bgcolor=ft.Colors.BLACK87, 
-            border_radius=10, 
+            border_radius=10,
+            padding=10,
             content=ft.Column(
                 controls=[
                     # Creamos un contenedor en el cual vamos a colocar una fila y esta a su
@@ -134,22 +134,32 @@ class Forms(ft.Control):
 # Comandos
 
     def on_registrar_llegada(self, e):
-        if self.placa.value != '':
-            # self.placa.value=self.placa.value.upper()
-            placa = self.placa.value
-            self.base.registrar_llegada(placa)
-            self.resultado_text.value = f"Vehículo {placa} registrado como llegado."
-            self.placa.value = ""
+        if self.placa.value.strip() != '':
+            placa = self.placa.value.strip().upper()
+            data = self.base.get_data()
+            
+            # Verificar si la placa ya está registrada sin hora de salida
+            placa_existente_sin_salida = any(x[1] == placa and x[3] is None for x in data)
+            if placa_existente_sin_salida:
+                self.resultado_text.value = f"""Vehículo {placa} ya se encuentra registrado.\nEsperando salida."""
+            else:
+                # Verificar si la placa está registrada con hora de salida, si es así, registrarla de nuevo
+                self.base.registrar_llegada(placa)
+                self.resultado_text.value = f"Vehículo {placa} registrado como llegado."
+                self.placa.value = ""
         else:
-            self.resultado_text.value = 'Debe ingresar un aplaca'
+            self.resultado_text.value = 'Debe ingresar una placa'
+        
         self.show_data()
+
 
         
     def on_registrar_salida(self, e):
         placa = self.placa.value
+        placa = placa.upper()
         precio = self.base.registrar_salida(placa)
         if precio is not None:
-            self.resultado_text.value = f"Vehículo {placa} registrado como salido. Precio: {precio:.2f} unidades."
+            self.resultado_text.value = f"Vehículo {placa} registrado como salido. Precio: $ {precio:.2f} pesos."
         else:
             self.resultado_text.value = f"No se encontró el vehículo {placa}."
         self.placa.value = ""
@@ -167,6 +177,7 @@ class Forms(ft.Control):
                     cells=[
                         ft.DataCell(ft.Text(x[1])),
                         ft.DataCell(ft.Text(x[2])),
+                        ft.DataCell(ft.Text(x[3])),
                     ]
                 )
                 
