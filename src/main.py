@@ -5,8 +5,8 @@ from views.forms import Forms
 def main(page: ft.Page):
     page.title = 'PARKING'
     page.bgcolor = ft.Colors.GREY_300
-    page.window.width = 600
-    page.window.height = 726
+    page.window.width = 500
+    page.window.height = 800
     # page.window.min_width = 800
     # page.window.min_height = 800
     page.window.resizable = True
