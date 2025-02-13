@@ -7,11 +7,8 @@ def main(page: ft.Page):
     page.bgcolor = ft.Colors.GREY_300
     page.window.width = 800
     page.window.height = 800
-    # page.window.min_width = 800
-    # page.window.min_height = 800
+    page.window.icon = './assets/icon.png'
     page.window.resizable = True
-    # page.vertical_alignment = ft.MainAxisAlignment.START
-    # page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.update()
     
     form = Forms(page)

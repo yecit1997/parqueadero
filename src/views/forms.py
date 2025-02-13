@@ -152,7 +152,11 @@ class Forms(ft.Control):
             ),
         )
 
-        self.container = ft.ResponsiveRow(expand=True, controls=[self.form, self.tabla])
+        self.container = ft.ResponsiveRow(
+            expand=True,
+             
+            controls=[self.form, self.tabla]
+            )
 
     def build(self):
         return self.container
