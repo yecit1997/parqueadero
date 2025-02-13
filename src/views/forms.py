@@ -90,6 +90,7 @@ class Forms(ft.Control):
                                 self.placa,
                                 self.resultado_text,
                                 ft.Row(
+                                    scroll = 'auto',
                                     alignment=ft.MainAxisAlignment.CENTER,
                                     expand=True,
                                     controls=[
@@ -123,6 +124,7 @@ class Forms(ft.Control):
                     # vez contendra la barra de busqueda de la tabla
                     ft.Container(
                         ft.Row(
+                            scroll = 'auto',
                             controls=[
                                 ft.Row(
                                     controls=[
