@@ -29,6 +29,20 @@ class Forms(ft.Control):
             on_change=self.search_contact,
         )
 
+        self.name_parking = ft.Text(
+            "PAR-KING",
+            text_align="center",
+            size=30,
+            color=ft.Colors.WHITE,
+        )
+
+        self.dar_salida = ft.IconButton(
+            tooltip="Editar",
+            icon=ft.Icons.EDIT,
+            icon_color=ft.Colors.WHITE,
+            on_click=self.salida,
+        )
+
         self.boton_mode = ft.IconButton(
             icon=ft.Icons.DARK_MODE,  # LIGHT_MODE
             icon_color="blue400",
@@ -65,12 +79,7 @@ class Forms(ft.Control):
                 spacing=200,
                 controls=[
                     ft.Container(
-                        ft.Text(
-                            "PAR-KING",
-                            text_align="center",
-                            size=30,
-                            color=ft.Colors.WHITE,
-                        ),
+                        self.name_parking,
                         alignment=ft.alignment.center,
                     ),
                     ft.Container(
@@ -115,7 +124,12 @@ class Forms(ft.Control):
                     ft.Container(
                         ft.Row(
                             controls=[
-                                self.search_filed,
+                                ft.Row(
+                                    controls=[
+                                        self.search_filed,
+                                        self.dar_salida,
+                                    ],
+                                ),
                                 self.boton_mode,
                             ],
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -201,11 +215,12 @@ class Forms(ft.Control):
             # En cada iteraccion los asignamos a una DataRow
             self.data_table.rows.append(
                 ft.DataRow(
+                    on_select_changed=self.get_index,
                     cells=[
                         ft.DataCell(ft.Text(x[1])),
                         ft.DataCell(ft.Text(x[2])),
                         ft.DataCell(ft.Text(x[3])),
-                    ]
+                    ],
                 )
             )
         self.page.update()
@@ -219,46 +234,57 @@ class Forms(ft.Control):
                 for x in placa:
                     self.data_table.rows.append(
                         ft.DataRow(
-                            # on_select_changed=self.get_index,
+                            on_select_changed=self.get_index,
                             cells=[
                                 ft.DataCell(ft.Text(x[1])),
                                 ft.DataCell(ft.Text(x[2])),
                                 ft.DataCell(ft.Text(x[3])),
-                            ]
+                            ],
                         )
                     )
                     self.page.update()
         else:
             self.show_data()
+        # self.page.update()
 
     def modo_theme(self, e):
         if e.name:
             if self.boton_mode.icon == "DARK_MODE":
                 self.boton_mode.icon = "LIGHT_MODE"
-                self.tabla.bgcolor=ft.Colors.BLACK87
-                self.form.bgcolor=ft.Colors.BLACK87
+                self.tabla.bgcolor = ft.Colors.BLACK87
+                self.form.bgcolor = ft.Colors.BLACK87
                 self.page.theme_mode = ft.ThemeMode.DARK
-                self.search_filed.border_color=ft.Colors.WHITE
-                self.search_filed.label_style=ft.TextStyle(color=ft.Colors.WHITE)
+                self.search_filed.border_color = ft.Colors.WHITE
+                self.search_filed.label_style = ft.TextStyle(color=ft.Colors.WHITE)
+                self.name_parking.color = ft.Colors.WHITE
             else:
                 self.boton_mode.icon = "DARK_MODE"
-                self.tabla.bgcolor=ft.Colors.WHITE
-                self.form.bgcolor=ft.Colors.WHITE
+                self.tabla.bgcolor = ft.Colors.WHITE
+                self.form.bgcolor = ft.Colors.WHITE
                 self.page.theme_mode = ft.ThemeMode.LIGHT
-                self.search_filed.border_color=ft.Colors.BLACK
-                self.search_filed.label_style=ft.TextStyle(color=ft.Colors.BLACK)
-                
+                self.search_filed.border_color = ft.Colors.BLACK
+                self.search_filed.label_style = ft.TextStyle(color=ft.Colors.BLACK)
+                self.name_parking.color = ft.Colors.BLACK87
+
         self.page.update()
-    
-        
-        
-        
-        # self.search_filed = ft.TextField(
-        #     label="Buscar placa",
-        #     suffix_icon=ft.Icons.SEARCH,
-        #     border=ft.InputBorder.UNDERLINE,
-        #     label_style=ft.TextStyle(color=ft.Colors.WHITE),
-        #     border_color=ft.Colors.WHITE,
-        #     show_cursor=True,
-        #     on_change=self.search_contact,
-        # )
+
+    def get_index(self, e):
+        if e.control.selected:
+            e.control.selected = False
+        else:
+            e.control.selected = True
+
+        placa = e.control.cells[0].content.value
+
+        for row in self.base.get_data():
+            if row[1] == placa:
+                self.selected__row = row
+                break
+        self.page.update()
+
+    def salida(self, e):
+        try:
+            self.placa.value = self.selected__row[1]
+            self.page.update()
+        except TypeError:
+            print("Se produjo un error")
