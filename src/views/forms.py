@@ -124,7 +124,6 @@ class Forms(ft.Control):
                     # vez contendra la barra de busqueda de la tabla
                     ft.Container(
                         ft.Row(
-                            scroll = 'auto',
                             controls=[
                                 ft.Row(
                                     controls=[
@@ -135,6 +134,7 @@ class Forms(ft.Control):
                                 self.boton_mode,
                             ],
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            scroll = 'auto',
                         )
                     ),
                     # Creamos una columna la cual es sus controlers contará
@@ -263,6 +263,7 @@ class Forms(ft.Control):
                 self.search_filed.border_color = ft.Colors.WHITE
                 self.search_filed.label_style = ft.TextStyle(color=ft.Colors.WHITE)
                 self.name_parking.color = ft.Colors.WHITE
+                self.dar_salida.icon_color =ft.Colors.WHITE
             else:
                 self.boton_mode.icon = "DARK_MODE"
                 self.tabla.bgcolor = ft.Colors.WHITE
@@ -271,6 +272,8 @@ class Forms(ft.Control):
                 self.search_filed.border_color = ft.Colors.BLACK
                 self.search_filed.label_style = ft.TextStyle(color=ft.Colors.BLACK)
                 self.name_parking.color = ft.Colors.BLACK87
+                self.dar_salida.icon_color =ft.Colors.BLACK87
+                
 
         self.page.update()
 

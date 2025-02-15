@@ -1,11 +1,11 @@
 import sqlite3 as sql
-import os
 from datetime import datetime
 
 class Conection:
 
     def __init__(self) -> None:
-        self.db_path = os.path.join('storage/data', 'estacionamiento.db')
+        # self.db_path = os.path.join('storage/data', 'estacionamiento.db')
+        self.db_path = 'estacionamiento.db'
         self.init_db()
 
     # Función para inicializar la base de datos
